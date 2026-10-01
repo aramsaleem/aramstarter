@@ -1,0 +1,18 @@
+# Safety net for servers whose document root points at the project folder instead of public/.
+# Correctly configured servers never read this file.
+
+# Never serve dotfiles (.env, .git, ...) under any circumstances.
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Send every request into public/, so source code, composer files and storage stay unreachable.
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

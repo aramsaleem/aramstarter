@@ -1,0 +1,271 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/forms';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+/*
+ * Both variants are driven by attributes set on <html> before the first paint,
+ * see resources/views/partials/head.blade.php.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+@custom-variant sidebar-collapsed (&:where([data-sidebar='collapsed'], [data-sidebar='collapsed'] *));
+
+@theme {
+    /* Vazirmatn covers Arabic and Kurdish (Sorani) script */
+    --font-sans: 'Geist', 'Vazirmatn', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --animate-aurora: aurora 22s ease-in-out infinite alternate;
+    --animate-fade-up: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    --animate-shine: shine 6s linear infinite;
+
+    @keyframes aurora {
+        0% {
+            transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+        }
+        100% {
+            transform: translate3d(6%, -8%, 0) rotate(18deg) scale(1.2);
+        }
+    }
+
+    @keyframes fade-up {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    @keyframes shine {
+        to {
+            background-position: 200% center;
+        }
+    }
+}
+
+/* Brand colors: point these at any Tailwind palette (or your own values) to rebrand the whole UI */
+@theme inline {
+    --color-primary-50: var(--color-violet-50);
+    --color-primary-100: var(--color-violet-100);
+    --color-primary-200: var(--color-violet-200);
+    --color-primary-300: var(--color-violet-300);
+    --color-primary-400: var(--color-violet-400);
+    --color-primary-500: var(--color-violet-500);
+    --color-primary-600: var(--color-violet-600);
+    --color-primary-700: var(--color-violet-700);
+    --color-primary-800: var(--color-violet-800);
+    --color-primary-900: var(--color-violet-900);
+    --color-primary-950: var(--color-violet-950);
+
+    /* Second hue, only used in gradients */
+    --color-accent-300: var(--color-cyan-300);
+    --color-accent-400: var(--color-cyan-400);
+    --color-accent-500: var(--color-cyan-500);
+
+    --color-canvas: #f7f7fa;
+    --color-ink: #06060a;
+
+    /* Deep navy for the landing page's dark panels */
+    --color-navy-800: #1c1a3d;
+    --color-navy-900: #121030;
+    --color-navy-950: #0b0a1f;
+}
+
+/* ---- Landing page effects ---- */
+
+@theme {
+    --animate-marquee: marquee 40s linear infinite;
+    --animate-float: float 7s ease-in-out infinite;
+    --animate-blink: blink 1.1s steps(2, start) infinite;
+
+    @keyframes marquee {
+        to {
+            transform: translateX(-50%);
+        }
+    }
+
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-12px);
+        }
+    }
+
+    @keyframes blink {
+        to {
+            visibility: hidden;
+        }
+    }
+}
+
+/* A light beam that travels around an element's border */
+@property --beam-angle {
+    syntax: '<angle>';
+    initial-value: 0deg;
+    inherits: false;
+}
+
+@keyframes beam-spin {
+    to {
+        --beam-angle: 360deg;
+    }
+}
+
+@utility border-beam {
+    position: relative;
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        background: conic-gradient(
+            from var(--beam-angle),
+            transparent 55%,
+            var(--color-primary-400) 75%,
+            var(--color-accent-300) 88%,
+            transparent 100%
+        );
+        mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        animation: beam-spin 5s linear infinite;
+        pointer-events: none;
+    }
+}
+
+/* Fine film grain on dark panels */
+@utility bg-grain {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+}
+
+/* Scroll reveal: resources/js/app.js adds .is-visible when the element enters the viewport */
+.reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition:
+        opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+        transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* A faint square grid, faded towards the edges */
+@utility bg-grid {
+    background-image:
+        linear-gradient(to right, var(--grid-line, rgb(24 24 27 / 0.06)) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--grid-line, rgb(24 24 27 / 0.06)) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+}
+
+/* Gradient text for headlines */
+@utility text-gradient {
+    background-image: linear-gradient(
+        100deg,
+        var(--color-primary-500),
+        var(--color-accent-400),
+        var(--color-primary-400),
+        var(--color-primary-500)
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Deeper gradient text that stays readable on white */
+@utility text-gradient-vivid {
+    background-image: linear-gradient(
+        100deg,
+        var(--color-primary-600),
+        var(--color-fuchsia-500),
+        var(--color-cyan-600),
+        var(--color-primary-600)
+    );
+    background-size: 200% auto;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Frosted glass surface used by cards, menus and the top bar */
+@utility glass {
+    background-color: rgb(255 255 255 / 0.72);
+    backdrop-filter: blur(20px) saturate(160%);
+}
+
+@layer base {
+    :root {
+        --grid-line: rgb(24 24 27 / 0.06);
+        --sidebar-width: 17.5rem;
+    }
+
+    :root[data-sidebar='collapsed'] {
+        --sidebar-width: 5rem;
+    }
+
+    .dark {
+        --grid-line: rgb(255 255 255 / 0.05);
+    }
+
+    .dark .glass {
+        background-color: rgb(12 12 18 / 0.6);
+    }
+
+    [x-cloak] {
+        display: none !important;
+    }
+
+    button:not(:disabled),
+    [role='button']:not(:disabled) {
+        cursor: pointer;
+    }
+
+    ::selection {
+        background-color: var(--color-primary-500);
+        color: white;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+    }
+}
+
+/* SweetAlert2 popups follow the app's radius and font */
+.swal2-popup {
+    font-family: inherit !important;
+    border-radius: 1.25rem !important;
+}
+
+.swal2-toast {
+    border-radius: 0.875rem !important;
+}
