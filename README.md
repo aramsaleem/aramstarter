@@ -37,7 +37,7 @@ cd my-project
 **Option B - clone this repository directly** and start a fresh history for your project:
 
 ```bash
-git clone https://github.com/aramsaleem/korafcloud-starter.git my-project
+git clone https://github.com/aramsaleem/aramstarter.git my-project
 cd my-project
 rm -rf .git          # PowerShell: Remove-Item -Recurse -Force .git
 git init -b main
