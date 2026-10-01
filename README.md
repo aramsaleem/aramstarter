@@ -47,7 +47,7 @@ With Laragon, clone into `C:\laragon\www` (or wherever your Laragon `www` folder
 
 ### 2. Create the database
 
-Open Laragon's database tool (HeidiSQL), MySQL Workbench or the `mysql` command line and run:
+Make sure MySQL is running (in Laragon: **Start All**). Laravel creates the database named in `.env` during setup if it doesn't exist. To create it yourself instead, run this in HeidiSQL, MySQL Workbench or the `mysql` command line:
 
 ```sql
 CREATE DATABASE my_project CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -61,7 +61,7 @@ Copy the example environment file:
 cp .env.example .env          # PowerShell: Copy-Item .env.example .env
 ```
 
-Then open `.env` and set at least:
+Then open `.env` and set at least these. **Do this before step 4:** every project needs its own `DB_DATABASE`, otherwise two projects share one database.
 
 ```dotenv
 APP_NAME="My Project"
@@ -86,7 +86,7 @@ This installs the PHP and npm packages, generates the app key, creates the table
 composer run dev
 ```
 
-This starts the web server, queue worker, log viewer and Vite together. Open http://localhost:8000 (or `http://my-project.test` with Laragon - click **Reload** in Laragon after cloning so the site points at `public/`).
+This starts the web server, queue worker and Vite together. Open http://localhost:8000 (or `http://my-project.test` with Laragon - click **Reload** in Laragon after cloning so the site points at `public/`).
 
 ### 6. Sign in
 
@@ -115,6 +115,7 @@ git push -u origin main
 
 ```bash
 composer run dev       # start the app while developing
+composer run logs      # live log viewer (Pail; macOS and Linux only - needs the pcntl extension)
 composer run test      # run the test suite
 composer run lint      # fix code style with Pint
 composer run review    # check code style, then run the tests
