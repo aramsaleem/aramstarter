@@ -1,31 +1,17 @@
 # KorafCloud Starter
 
-A Laravel starter kit with everything a new app needs on day one, styled entirely with Tailwind CSS.
+A Laravel starter kit with everything a new app needs on day one, styled entirely with Tailwind CSS. Clone it, run one command, and start building your own project on top of it.
 
 - ✅ **User management** - search, filter, create, edit, verify and delete users
-- ✅ **Role management** - bundle permissions into roles
-- ✅ **Permissions management** - create your own permissions in the browser
+- ✅ **Role & permission management** - bundle permissions into roles, create your own permissions in the browser
 - ✅ **Two-factor authentication (2FA)** - TOTP with QR setup and recovery codes
 - ✅ **Social login** - Google, Facebook and X (Twitter)
+- ✅ **Impersonation** - admins can sign in as another user and return with one click
+- ✅ **Activity log** - sign-ins, failed attempts, 2FA events and every admin change
+- ✅ **Editable website** - texts, features, pricing and FAQ in every language, from the admin panel
+- ✅ **Admin dashboard** - live charts, people overview and a security checklist
 - ✅ **Localization** - English, Arabic and Central Kurdish, with full right-to-left support
-- ✅ Separate **dashboard for Super Admins**
-- ✅ Laravel 12 and Livewire 3
-
-## Stack
-
-| | |
-|---|---|
-| Framework | Laravel 12, Livewire 3 (class components, Alpine.js included) |
-| Styling | Tailwind CSS 4, custom Blade components in `resources/views/components/ui` |
-| Icons | [Blade Heroicons](https://github.com/blade-ui-kit/blade-heroicons) |
-| Code style | [Laravel Pint](https://github.com/laravel/pint) |
-| Testing | [Pest](https://pestphp.com) and [missing-livewire-assertions](https://github.com/christophrumpel/missing-livewire-assertions) by Christoph Rumpel |
-| Alerts | [Livewire Alert](https://github.com/jantinnerezo/livewire-alert) (SweetAlert2) |
-| Roles & permissions | [Spatie Laravel Permission](https://spatie.be/docs/laravel-permission) |
-| Two-factor authentication | [Google2FA](https://github.com/antonioribeiro/google2fa) and [bacon-qr-code](https://github.com/Bacon/BaconQrCode) |
-| Social login | [Laravel Socialite](https://laravel.com/docs/socialite) |
-| Safety | [Strict Eloquent models](https://planetscale.com/blog/laravels-safety-mechanisms) outside production |
-| Debugging | [Laravel Debugbar](https://github.com/barryvdh/laravel-debugbar) |
+- ✅ Laravel 12, Livewire 3, Tailwind CSS 4, Pest
 
 ## Requirements
 
@@ -33,38 +19,128 @@ A Laravel starter kit with everything a new app needs on day one, styled entirel
 - Composer 2
 - Node.js 20.19+ or 22.12+
 - MySQL 8 (or SQLite, MariaDB, PostgreSQL)
+- Git
 
-## Installation
+[Laragon](https://laragon.org) on Windows includes all of these.
+
+## Quick start
+
+### 1. Get the code
+
+**Option A - start a new project from the template (recommended).** On GitHub, click **Use this template → Create a new repository**, give it your project's name, then clone your new repository:
+
+```bash
+git clone https://github.com/YOUR-USERNAME/YOUR-PROJECT.git my-project
+cd my-project
+```
+
+**Option B - clone this repository directly** and start a fresh history for your project:
+
+```bash
+git clone https://github.com/aramsaleem/korafcloud-starter.git my-project
+cd my-project
+rm -rf .git          # PowerShell: Remove-Item -Recurse -Force .git
+git init -b main
+```
+
+With Laragon, clone into `C:\laragon\www` (or wherever your Laragon `www` folder is) so the project is served at `http://my-project.test`.
+
+### 2. Create the database
+
+Open Laragon's database tool (HeidiSQL), MySQL Workbench or the `mysql` command line and run:
+
+```sql
+CREATE DATABASE my_project CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 3. Configure the project
+
+Copy the example environment file:
+
+```bash
+cp .env.example .env          # PowerShell: Copy-Item .env.example .env
+```
+
+Then open `.env` and set at least:
+
+```dotenv
+APP_NAME="My Project"
+APP_URL=http://my-project.test
+
+DB_DATABASE=my_project
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 4. Install everything
 
 ```bash
 composer run setup
 ```
 
-This installs the PHP and npm dependencies, creates `.env`, generates the app key, runs the migrations and seeders and builds the frontend. Before running it, create the database named in `.env` (`korafcloud` by default):
+This installs the PHP and npm packages, generates the app key, creates the tables, seeds roles, permissions, demo users and website content, and builds the frontend.
 
-```sql
-CREATE DATABASE korafcloud CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-Then start everything (web server, queue worker, log viewer and Vite) with:
+### 5. Run it
 
 ```bash
 composer run dev
 ```
 
-With Laragon, the site is also served at `http://korafcloud.test`. If that URL lists the project files instead of the app, click **Reload** in Laragon so it points the virtual host at `public/`.
+This starts the web server, queue worker, log viewer and Vite together. Open http://localhost:8000 (or `http://my-project.test` with Laragon - click **Reload** in Laragon after cloning so the site points at `public/`).
 
-### Accounts
+### 6. Sign in
 
-In the `local` environment the seeder creates a Super Admin, an Admin and a regular user. See `database/seeders/DemoUserSeeder.php` for their logins.
+In the `local` environment the seeder creates these accounts. Every one uses the password `password`:
 
-In production, create your first Super Admin with:
+| Email | Role |
+|---|---|
+| `superadmin@example.com` | Super Admin |
+| `admin@example.com` | Admin |
+| `user@example.com` | User |
+
+The admin panel is at `/admin`. Change or delete the demo accounts before going live.
+
+### 7. Push to your own repository
+
+If you used Option B, create an empty repository on GitHub (no README), then:
 
 ```bash
-php artisan app:create-super-admin
+git add -A
+git commit -m "Start my project from KorafCloud Starter"
+git remote add origin https://github.com/YOUR-USERNAME/YOUR-PROJECT.git
+git push -u origin main
 ```
 
-The command prompts for a name, email and password. Pass the email of an existing user to promote them instead.
+## Everyday commands
+
+```bash
+composer run dev       # start the app while developing
+composer run test      # run the test suite
+composer run lint      # fix code style with Pint
+composer run review    # check code style, then run the tests
+npm run build          # build the frontend for production
+php artisan migrate    # run new migrations
+```
+
+## Going to production
+
+```bash
+composer install --no-dev --optimize-autoloader
+npm ci && npm run build
+php artisan migrate --force
+php artisan db:seed --class=RolesAndPermissionsSeeder --force
+php artisan db:seed --class=ContentSeeder --force
+php artisan app:create-super-admin
+php artisan optimize
+```
+
+In the production `.env`, set `APP_ENV=production`, `APP_DEBUG=false` and an `https://` `APP_URL`. Add a cron entry for the scheduler, which removes activity log entries older than 180 days:
+
+```bash
+* * * * * cd /path/to/project && php artisan schedule:run >> /dev/null 2>&1
+```
+
+`app:create-super-admin` prompts for a name, email and password. Pass the email of an existing user to promote them instead.
 
 ## Features
 
@@ -130,6 +206,27 @@ How accounts are matched:
 - A provider is linked to an existing account only if that account's email is verified. This stops someone from registering your address before you do and sharing your account.
 - A user can't disconnect their last way of logging in.
 
+### Impersonation
+
+Users with the `users.impersonate` permission (Super Admins and Admins by default) can click **Sign in as user** on the users list, a user's edit page or the dashboard. They confirm their own password first, then see the app exactly as that user does. An amber bar offers **Return to my account**.
+
+- You can only impersonate users you outrank, never yourself, and never from inside another impersonation.
+- The user's password, 2FA, connected accounts and account deletion are locked while impersonating.
+- Sessions end on their own after 60 minutes (`App\Support\Impersonation::MAX_MINUTES`).
+- Starting, ending and everything done in between is recorded in the activity log with the admin's email.
+
+### Activity log
+
+**Admin → Activity** (`activity.view` permission) lists sign-ins, failed attempts, lockouts, 2FA events and every change to users, roles, permissions and the website, with IP address and browser. Failed sign-ins keep the attempted email but never the password. Record your own events with:
+
+```php
+Audit::log(ActivityEvent::UserUpdated, $user, ['changed' => ['name']]);
+```
+
+### Editable website
+
+**Admin → Website** (`content.manage` permission) edits the public home page without touching code: hero texts, buttons, closing text, footer, contact email, section visibility, feature cards, pricing plans and FAQ, in every language. Empty translations fall back to the default language. `php artisan db:seed --class=ContentSeeder` fills the starting content and never overwrites your edits.
+
 ### Localization
 
 The language is chosen from, in order:
@@ -148,7 +245,7 @@ To add a language:
 
 ### Appearance
 
-Users can choose a light, dark or system theme. The choice is saved in the browser and applied before the page paints, including after `wire:navigate` visits.
+Light is the default; users can switch to dark or system under **Settings → Appearance**. The choice is saved in the browser and applied before the page paints, including after `wire:navigate` visits.
 
 To change the brand color, edit the `--color-primary-*` variables in `resources/css/app.css`.
 
@@ -163,12 +260,6 @@ Outside production, `Model::shouldBeStrict()` turns these mistakes into exceptio
 In production, `DB::prohibitDestructiveCommands()` blocks `migrate:fresh` and `db:wipe`.
 
 ## Development
-
-```bash
-composer run test      # Pest test suite
-composer run lint      # fix code style with Pint
-composer run review    # check code style, then run the tests
-```
 
 The tests run against an in-memory SQLite database, so they never touch your development data.
 
@@ -193,15 +284,18 @@ Gmail always sends from the signed-in account, so `MAIL_FROM_ADDRESS` must match
 
 ```
 app/
-  Enums/                 SystemRole, SystemPermission, SocialProvider
-  Http/Controllers/      social login, email verification, language switch
-  Http/Middleware/       SetLocale
+  Enums/                 SystemRole, SystemPermission, SocialProvider, ActivityEvent
+  Http/Controllers/      home page, social login, email verification, language, impersonation
+  Http/Middleware/       locale, security headers, impersonation guards
   Livewire/Auth/         login, register, password reset, 2FA challenge...
   Livewire/Settings/     profile, password, 2FA, connected accounts, appearance, language
-  Livewire/Admin/        dashboard, users, roles, permissions
-  Policies/              who may edit or delete users, roles and permissions
+  Livewire/Admin/        dashboard, users, roles, permissions, activity log, website editor
+  Models/                User, ActivityLog, Feature, Plan, Faq, SiteSetting
+  Policies/              who may edit, delete or impersonate users, roles and permissions
   Services/              TwoFactorAuthenticator (Google2FA + QR codes)
+  Support/               Audit, Impersonation, SiteSettings, Localization
 resources/views/
+  welcome.blade.php      the public website (content from Admin > Website)
   components/ui/         Tailwind components: button, input, select, modal, dropdown...
   components/layouts/    app, admin and auth layouts
 lang/                    ar.json, ckb.json and translated validation messages
